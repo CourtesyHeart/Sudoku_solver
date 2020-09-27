@@ -90,38 +90,38 @@ class Application(tk.Frame):
             else:
                 blur = cv2.GaussianBlur(self.src,(5,5),0)
                 try:
-                    os.remove("C:/Users/VAHAH/Desktop/project/sudoku solver/StagesIMG/1.jpg")
+                    os.remove("StagesIMG/1.jpg")
                 except:
                     pass
-                cv2.imwrite("C:/Users/VAHAH/Desktop/project/sudoku solver/StagesIMG/1.jpg",blur)
+                cv2.imwrite("StagesIMG/1.jpg",blur)
                 self.printout("blur save")
 
                 gray = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C | cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 5, 2)
 
                 try:
-                    os.remove("C:/Users/VAHAH/Desktop/project/sudoku solver/StagesIMG/2.jpg")
+                    os.remove("StagesIMG/2.jpg")
                 except:
                     pass
-                cv2.imwrite("C:/Users/VAHAH/Desktop/project/sudoku solver/StagesIMG/2.jpg",gray)
+                cv2.imwrite("StagesIMG/2.jpg",gray)
                 self.printout("gray save")
 
                 invert = cv2.bitwise_not(gray)
 
                 try:
-                    os.remove("C:/Users/VAHAH/Desktop/project/sudoku solver/StagesIMG/3.jpg")
+                    os.remove("StagesIMG/3.jpg")
                 except:
                     pass
-                cv2.imwrite("C:/Users/VAHAH/Desktop/project/sudoku solver/StagesIMG/3.jpg",invert)
+                cv2.imwrite("StagesIMG/3.jpg",invert)
                 self.printout("invert save")
 
                 kernel = numpy.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], numpy.uint8)
                 gray = cv2.dilate(invert, kernel)
                 self.image = gray
                 try:
-                    os.remove("C:/Users/VAHAH/Desktop/project/sudoku solver/StagesIMG/4.jpg")
+                    os.remove("StagesIMG/4.jpg")
                 except:
                     pass
-                cv2.imwrite("C:/Users/VAHAH/Desktop/project/sudoku solver/StagesIMG/4.jpg", gray)
+                cv2.imwrite("StagesIMG/4.jpg", gray)
                 self.printout("dilate save")
         except:
             self.printout("Please open the image first")
@@ -138,7 +138,7 @@ class Application(tk.Frame):
                 stage = 0
             stage +=1
             img.pack_forget()
-            self.load_img = Image.open("C:/Users/VAHAH/Desktop/project/sudoku solver/StagesIMG/{}.jpg".format(stage))
+            self.load_img = Image.open("StagesIMG/{}.jpg".format(stage))
             self.resized_img = self.load_img.resize((690,690))
             self.render = ImageTk.PhotoImage(self.resized_img)
             img = tk.Label(self.imageFrame, image=self.render)
@@ -161,7 +161,7 @@ class Application(tk.Frame):
                 stage =5
             stage -=1
             img.pack_forget()
-            self.load_img = Image.open("C:/Users/VAHAH/Desktop/project/sudoku solver/StagesIMG/{}.jpg".format(stage))
+            self.load_img = Image.open("StagesIMG/{}.jpg".format(stage))
             self.resized_img = self.load_img.resize((690,690))
             self.render = ImageTk.PhotoImage(self.resized_img)
             img = tk.Label(self.imageFrame, image=self.render)
