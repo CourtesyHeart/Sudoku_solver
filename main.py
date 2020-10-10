@@ -123,6 +123,53 @@ class Application(tk.Frame):
                     pass
                 cv2.imwrite("StagesIMG/4.jpg", gray)
                 self.printout("dilate save")
+                try:
+                    os.remove("silceBorad/0_0.jpg")
+                except:
+                    pass
+                
+                y=0
+                x=0
+                stack = 0
+                height,width = gray.shape
+                sq_h = height//9
+                sq_w = width//9
+                for i in range(1,10):
+                    for j in range(1,10):
+                        crop_img = gray[y:y+sq_h, x:x+sq_w]
+                        crop_img_shape_height ,crop_img_shape_width = crop_img.shape
+                        
+                        for height in range(crop_img_shape_height):#หาแกนx
+                            for start_width in range(crop_img_shape_width):
+                                if crop_img[height][start_width] == 255:
+                                    stack += 1
+                            if stack >= crop_img_shape_width-(crop_img_shape_width*0.2):
+                                for end_width in range(crop_img_shape_width):
+                                    crop_img[height][end_width] = 0 
+                            stack = 0
+                        
+                        for width in range(crop_img_shape_width):
+                            for start_height in range(crop_img_shape_height):
+                                if crop_img[start_height][width] == 255:
+                                    stack +=1
+
+                            if stack >= crop_img_shape_height-(crop_img_shape_height*0.2):
+                                for end_height in range(crop_img_shape_height):
+                                    crop_img[end_height][width] = 0 
+                            stack = 0
+
+                        x = x+sq_w
+                        try:
+                            os.remove("silceBorad/{}_{}.jpg".format(i,j))
+                        except:
+                            pass
+                        cv2.imwrite("silceBorad/{}_{}.jpg".format(i,j), crop_img)
+
+                        self.printout("{}_{}".format(i,j))
+
+                    x = 0
+                    y = y+sq_h
+
         except:
             self.printout("Please open the image first")
 
