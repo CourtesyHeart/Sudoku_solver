@@ -10,7 +10,6 @@ class BoardExtractor:
         self.image = cv2.imread(imagepath, 0)
         self.originalimage = np.copy(self.image)
         self.extractedgrid = None
-        print("11")
     '''This function blurs the image, applies thresholding, inverts it and dilates the image'''
     def preprocess_image(self):
 

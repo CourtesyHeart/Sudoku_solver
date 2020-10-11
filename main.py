@@ -5,6 +5,7 @@ import cv2
 import sys
 import numpy
 import os
+from scipy import ndimage
 
 stage = 0
 
@@ -123,10 +124,7 @@ class Application(tk.Frame):
                     pass
                 cv2.imwrite("StagesIMG/4.jpg", gray)
                 self.printout("dilate save")
-                try:
-                    os.remove("silceBorad/0_0.jpg")
-                except:
-                    pass
+                
                 
                 y=0
                 x=0
@@ -139,11 +137,11 @@ class Application(tk.Frame):
                         crop_img = gray[y:y+sq_h, x:x+sq_w]
                         crop_img_shape_height ,crop_img_shape_width = crop_img.shape
                         
-                        for height in range(crop_img_shape_height):#หาแกนx
+                        for height in range(crop_img_shape_height): #หาเส้นแกน x ถ้ายาวเกิน 80% จะตัดทิ้ง
                             for start_width in range(crop_img_shape_width):
                                 if crop_img[height][start_width] == 255:
                                     stack += 1
-                            if stack >= crop_img_shape_width-(crop_img_shape_width*0.2):
+                            if stack >= crop_img_shape_width-(crop_img_shape_width*0.25):
                                 for end_width in range(crop_img_shape_width):
                                     crop_img[height][end_width] = 0 
                             stack = 0
@@ -153,12 +151,29 @@ class Application(tk.Frame):
                                 if crop_img[start_height][width] == 255:
                                     stack +=1
 
-                            if stack >= crop_img_shape_height-(crop_img_shape_height*0.2):
+                            if stack >= crop_img_shape_height-(crop_img_shape_height*0.25):
                                 for end_height in range(crop_img_shape_height):
                                     crop_img[end_height][width] = 0 
                             stack = 0
 
-                        x = x+sq_w
+                        x = x+sq_w  
+                        crop_img = cv2.dilate(crop_img, kernel)
+                        try:
+
+                            label, num_label = ndimage.label(crop_img >= 125)
+                            size = numpy.bincount(label.ravel())
+                            biggest_label = size[1:].argmax() + 1
+                            clump_mask = label == biggest_label
+                            height,width = clump_mask.shape
+                            self.printout("{} biggg".format(biggest_label))
+                            if numpy.amax(size[1:]) <= 0.075 * (height * width):
+                                clump_mask =  clump_mask * 0
+                            else:
+                                clump_mask = clump_mask*255
+                            crop_img = clump_mask.astype(numpy.uint8)
+                        except:
+                            pass
+
                         try:
                             os.remove("silceBorad/{}_{}.jpg".format(i,j))
                         except:
@@ -172,6 +187,7 @@ class Application(tk.Frame):
 
         except:
             self.printout("Please open the image first")
+
 
     def next_button(self):
         self.next_button = tk.Button(self.openFrame,text = ">>",command= self.next_command)
